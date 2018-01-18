@@ -54,9 +54,7 @@ $(() => {
     let height = $(`<td>${person.height}</td>`)
     let birth = $(`<td>${person.birth_year}</td>`)
 
-    row.append(name)
-    row.append(height)
-    row.append(birth)
+    row.append(name, height, birth)
 
     return row
   }
@@ -72,4 +70,15 @@ $(() => {
     return row
   }
   
+  $('#searchPersonForm').submit((e) => {
+    e.preventDefault()
+    
+    let input = $('#inputName').val()
+
+    $.get(`https://swapi.co/api/people/?search=${input}`)
+      .done((res) => {
+        let person = res.results[0]
+        $('#personInfoPanel').text(`${person.hair_color}`)
+      })
+  })
 })

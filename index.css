@@ -7,5 +7,9 @@ body {
 }
 
 #buttonRow {
+  margin-bottom: 1%;
+}
+
+#searchRow {
   margin-bottom: 5%;
 }

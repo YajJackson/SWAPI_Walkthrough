@@ -1,59 +1,63 @@
 $(() => {
 
   localStorage.clear()
-  let loaded = false
   let storedPeople = []
+  let storedPlanets = []
 
   $('#clearButton').click(() => {
     $('#tableBody').empty()
     $('#dataOne').text('Pick')
     $('#dataTwo').text('From')
     $('#dataThree').text('Above')
-    loaded = false
   })
 
   $('#peopleButton').click(() => {
-    if(!loaded) {
-      loaded = true
-      if(!localStorage.getItem('storedPeople')){
-        $.ajax({
-          type: 'GET',
-          url: 'https://swapi.co/api/people'
-        }).done((res) => {
-          $('#dataOne').text('Name')
-          $('#dataTwo').text('Height')
-          $('#dataThree').text('Birth Year')
+    $('#tableBody').empty()
+    $('#dataOne').text('Name')
+    $('#dataTwo').text('Height')
+    $('#dataThree').text('Birth Year')
 
-          let people = res.results
-          for(p of people) {
-            storedPeople.push({name: p.name, height: p.height, birth_year: p.birth_year})
-            $('#tableBody').append(createPersonRow(p))
-          }
-          localStorage.setItem('storedPeople', JSON.stringify(storedPeople))
-        })
-      } else {
-        for(p of JSON.parse(localStorage.getItem('storedPeople'))) {
+    if(!localStorage.getItem('storedPeople')){
+      $.ajax({
+        type: 'GET',
+        url: 'https://swapi.co/api/people'
+      }).done((res) => {
+        
+
+        let people = res.results
+        for(p of people) {
+          storedPeople.push({name: p.name, height: p.height, birth_year: p.birth_year})
           $('#tableBody').append(createPersonRow(p))
         }
+        localStorage.setItem('storedPeople', JSON.stringify(storedPeople))
+      })
+    } else {
+      for(p of storedPeople) {
+        $('#tableBody').append(createPersonRow(p))
       }
     }
   })
 
   $('#planetButton').click(() => {
-    if(!loaded){
-      loaded = true
-
+    $('#tableBody').empty()
+    $('#dataOne').text('Name')
+    $('#dataTwo').text('Diameter')
+    $('#dataThree').text('Climate')
+    
+    if(!localStorage.getItem('storedPlanets')) {
       $.get('https://swapi.co/api/planets/')
-        .done((res) => {
-          $('#dataOne').text('Name')
-          $('#dataTwo').text('Diameter')
-          $('#dataThree').text('Climate')
-
-          let planets = res.results
-          for (p of planets) {
-            $('#tableBody').append(createPlanetRow(p))
-          }
-        })
+      .done((res) => {
+        let planets = res.results
+        for(p of planets) {
+          storedPlanets.push({name: p.name, diameter: p.diameter, climate: p.climate})
+          $('#tableBody').append(createPlanetRow(p))
+        }
+        localStorage.setItem('storedPlanets', JSON.stringify(storedPlanets))
+      })
+    } else {
+      for(p of storedPlanets) {
+        $('#tableBody').append(createPlanetRow(p))
+      }
     }
   })
 
@@ -78,7 +82,7 @@ $(() => {
 
     return row
   }
-  
+
   $('#searchPersonForm').submit((e) => {
     e.preventDefault()
     

@@ -1,6 +1,8 @@
 $(() => {
 
+  localStorage.clear()
   let loaded = false
+  let storedPeople = []
 
   $('#clearButton').click(() => {
     $('#tableBody').empty()
@@ -13,20 +15,27 @@ $(() => {
   $('#peopleButton').click(() => {
     if(!loaded) {
       loaded = true
+      if(!localStorage.getItem('storedPeople')){
+        $.ajax({
+          type: 'GET',
+          url: 'https://swapi.co/api/people'
+        }).done((res) => {
+          $('#dataOne').text('Name')
+          $('#dataTwo').text('Height')
+          $('#dataThree').text('Birth Year')
 
-      $.ajax({
-        type: 'GET',
-        url: 'https://swapi.co/api/people'
-      }).done((res) => {
-        $('#dataOne').text('Name')
-        $('#dataTwo').text('Height')
-        $('#dataThree').text('Birth Year')
-
-        let people = res.results
-        for(p of people) {
+          let people = res.results
+          for(p of people) {
+            storedPeople.push({name: p.name, height: p.height, birth_year: p.birth_year})
+            $('#tableBody').append(createPersonRow(p))
+          }
+          localStorage.setItem('storedPeople', JSON.stringify(storedPeople))
+        })
+      } else {
+        for(p of JSON.parse(localStorage.getItem('storedPeople'))) {
           $('#tableBody').append(createPersonRow(p))
         }
-      })
+      }
     }
   })
 
@@ -74,11 +83,12 @@ $(() => {
     e.preventDefault()
     
     let input = $('#inputName').val()
+    $('#inputName').val('')
 
     $.get(`https://swapi.co/api/people/?search=${input}`)
       .done((res) => {
         let person = res.results[0]
-        $('#personInfoPanel').text(`${person.hair_color}`)
+        $('#personInfoPanel').text(`${person.name}'s hair is: ${person.hair_color}`)
       })
   })
 })

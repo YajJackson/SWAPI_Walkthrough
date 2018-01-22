@@ -1,5 +1,5 @@
 $(() => {
-
+  
   localStorage.clear()
   let storedPeople = []
   let storedPlanets = []
@@ -22,8 +22,6 @@ $(() => {
         type: 'GET',
         url: 'https://swapi.co/api/people'
       }).done((res) => {
-        
-
         let people = res.results
         for(p of people) {
           storedPeople.push({name: p.name, height: p.height, birth_year: p.birth_year})
